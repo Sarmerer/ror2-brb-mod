@@ -4,10 +4,7 @@ using RoR2;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-
-#if DEBUG
-using HotCompilerNamespace;
-#endif
+using UnityEngine.Networking;
 
 namespace ExamplePlugin
 {
@@ -101,10 +98,6 @@ namespace ExamplePlugin
             GlobalEventManager.onCharacterDeathGlobal += GlobalEventManager_onCharacterDeathGlobal;
 
             On.RoR2.PauseManager.CCTogglePause += OnPauseToggle;
-
-#if DEBUG
-            HotCompiler.CompileIt();
-#endif
         }
 
         private void OnPauseToggle(On.RoR2.PauseManager.orig_CCTogglePause orig, global::RoR2.ConCommandArgs args)
@@ -143,27 +136,16 @@ namespace ExamplePlugin
 
         private void Update()
         {
-            // This if statement checks if the player has currently pressed F2.
             if (Input.GetKeyDown(KeyCode.F2))
             {
                 SpawnItem();
                 TriggerPause();
             }
-
-#if DEBUG
-            if (Input.GetKeyDown(KeyCode.F5))
-            {
-                HotCompiler.CompileIt();
-            }
-#endif
         }
 
         private void SpawnItem()
         {
-            // Get the player body to use a position:
             var transform = PlayerCharacterMasterController.instances[0].master.GetBodyObject().transform;
-
-            // And then drop our defined item in front of the player.
 
             Log.Info($"Player pressed F2. Spawning our custom item at coordinates {transform.position}");
             PickupDropletController.CreatePickupDroplet(PickupCatalog.FindPickupIndex(myItemDef.itemIndex), transform.position, transform.forward * 20f);
@@ -179,6 +161,11 @@ namespace ExamplePlugin
                 localUserSender = LocalUserManager.GetFirstLocalUser(),
                 commandName = "pause"
             });
+        }
+
+        public void TestHotReload()
+        {
+            Log.Info("testme");
         }
     }
 }
